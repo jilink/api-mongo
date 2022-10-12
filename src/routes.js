@@ -4,13 +4,18 @@ import User from './models/user';
 import { check, validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import auth from './auth-middleware';
 
 const router = express.Router();
 
-// Get all users
-router.get('/users', async (req, res) => {
-  const users = await User.find();
-  res.send(users);
+// Get all users only if authenticated
+router.get("/users", auth, async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (e) {
+    res.send({ message: "Error in Fetching user" });
+  }
 });
 
 router.post(
@@ -58,7 +63,7 @@ router.post(
 
       jwt.sign(
         payload,
-        'randomString',
+        process.env.JWT_KEY,
         {
           expiresIn: 10000,
         },
@@ -117,7 +122,7 @@ router.post(
 
       jwt.sign(
         payload,
-        'randomString',
+        process.env.JWT_KEY,
         {
           expiresIn: 3600,
         },
