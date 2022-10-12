@@ -1,13 +1,10 @@
 import 'dotenv/config';
 
-const userCredentials = { firstname: 'Robin' };
-const userDetails = { nationality: 'German' };
+const mongoose = require("mongoose");
 
-const user = {
-  ...userCredentials,
-  ...userDetails,
-};
+const mongoDB = process.env.URI;
+mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 
-console.log(user);
+const db = mongoose.connection;
 
-console.log(process.env.SOME_ENV_VARIABLE);
+db.on("error", console.error.bind(console, "MongoDB connection error:"));
